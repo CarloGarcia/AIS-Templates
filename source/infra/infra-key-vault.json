@@ -1,0 +1,98 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "keyVaultName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-kv-', parameters('infra').region)]",
+    "networkAcls": {
+      "defaultAction": "Deny",
+      "bypass": "AzureServices",
+      "virtualNetworkRules": [],
+      "ipRules": []
+    },
+    "automationServicePrincipalAccessPolicies": [
+      {
+        "objectId": "[parameters('infra').automationServicePrincipal]",
+        "tenantId": "[subscription().tenantId]",
+        "permissions": {
+          "keys": [ "All" ],
+          "secrets": [ "All" ],
+          "certificates": [ "All" ]
+        }
+      }
+    ],
+    "serviceBusNameSpace": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-sb-', parameters('infra').region)]",
+    "serviceBusSasKeyName": "RootManageSharedAccessKey",
+    "authorizationRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNameSpace'), variables('serviceBusSasKeyName'))]",
+    "serviceBusSecretName": "Service-Bus-Connection-String"
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-06-01",
+      "name": "[variables('keyVaultName')]",
+      "location": "[resourceGroup().location]",
+      "type": "Microsoft.KeyVault/vaults",
+      "tags": {
+        "displayName": "KeyVault for demo",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "KeyVault",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "security",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      },
+      "properties": {
+        "enabledForDeployment": "false",
+        "enabledForTemplateDeployment": "true",
+        "enabledForDiskEncryption": "false",
+        "accessPolicies": "[variables('automationServicePrincipalAccessPolicies')]",
+        "tenantId": "[subscription().tenantId]",
+        "sku": {
+          "name": "Standard",
+          "family": "A"
+        },
+        "networkAcls": "[variables('networkAcls')]"
+      },
+      "resources": []
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "name": "[concat(variables('keyVaultName'), '/', variables('serviceBusSecretName'))]",
+      "apiVersion": "2018-02-14",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "contentType": "text/plain",
+        "value": "[listKeys(variables('authorizationRuleResourceId'), '2017-04-01').primaryConnectionString]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+      ]
+    }
+  ],
+  "outputs": {}
+}

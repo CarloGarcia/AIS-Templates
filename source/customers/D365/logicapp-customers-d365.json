@@ -1,0 +1,111 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "logicAppName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-customers-d365-', parameters('infra').region)]",
+    "logicAppResourceId": "[resourceId('Microsoft.Logic/workflows', variables('logicAppName'))]",
+    "infraResourceGroup": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-infra-', parameters('infra').region)]",
+    "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Logic/workflows",
+      "apiVersion": "2017-07-01",
+      "name": "[variables('logicAppName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Logic App for Customers from D365",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "LogicApp",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "workflow",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      },
+      "properties": {
+        "state": "Enabled",
+        "definition": {
+          "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {},
+          "triggers": {
+            "request": {
+              "type": "Request",
+              "kind": "Http",
+              "inputs": {
+                "schema": {}
+              }
+            }
+          },
+          "actions": {
+            "Response": {
+              "runAfter": {},
+              "type": "Response",
+              "inputs": {
+                "statusCode": 200
+              }
+            }
+          },
+          "outputs": {}
+        },
+        "parameters": {}
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "name": "[concat('/Microsoft.Insights/', variables('logicAppName'), '-logs')]",
+          "apiVersion": "2017-05-01-preview",
+          "tags": {
+            "displayName": "Logs to OMS",
+            "createdBy": "[parameters('releaseInfo')]"
+          },
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "category": "WorkflowRuntime",
+                "enabled": true
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true
+              }
+            ]
+          },
+          "dependsOn": [
+            "[variables('logicAppResourceId')]"
+          ]
+        }
+      ]
+    }
+  ]
+}

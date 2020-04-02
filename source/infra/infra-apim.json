@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    },
+    "publisherEmail": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "The email address of the owner of the service"
+      }
+    },
+    "publisherName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "The name of the owner of the service"
+      }
+    },
+    "apiManagementSku": {
+      "type": "string",
+      "allowedValues": [
+        "Consumption",
+        "Developer",
+        "Standard",
+        "Premium"
+      ],
+      "defaultValue": "Developer",
+      "metadata": {
+        "description": "The pricing tiers of this API Management service"
+      }
+    },
+    "apiManagementSkuCount": {
+      "type": "int",
+      "defaultValue": 1,
+      "metadata": {
+        "description": "The instance size of this API Management service."
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
+    }
+  },
+  "variables": {
+    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]",
+    "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2019-12-01",
+      "name": "[variables('apiManagementServiceName')]",
+      "type": "Microsoft.ApiManagement/service",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "APIM for demo",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "APIM",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "API",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      },
+      "sku": {
+        "name": "[parameters('apiManagementSku')]",
+        "capacity": "[parameters('apiManagementSkuCount')]"
+      },
+      "properties": {
+        "publisherEmail": "[parameters('publisherEmail')]",
+        "publisherName": "[parameters('publisherName')]"
+      }
+    },
+    {
+      "name": "[concat(variables('apiManagementServiceName'), '/', 'Microsoft.Insights/service')]",
+      "type": "Microsoft.ApiManagement/service/providers/diagnosticSettings",
+      "apiVersion": "2017-05-01-preview",
+      "dependsOn": [
+        "[concat('Microsoft.ApiManagement/service/', variables('apiManagementServiceName'))]"
+      ],
+      "properties": {
+        "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+        "logs": [
+          {
+            "category": "GatewayLogs",
+            "enabled": true
+          }
+        ]
+      }
+    }
+  ]
+}

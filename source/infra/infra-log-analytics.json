@@ -1,0 +1,63 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]"
+  },
+  "resources": [
+    {
+      "type": "microsoft.operationalinsights/workspaces",
+      "apiVersion": "2015-11-01-preview",
+      "name": "[variables('logAnalyticsName')]",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "source": "Azure",
+        "sku": {
+          "name": "pergb2018"
+        },
+        "retentionInDays": 30
+      },
+      "tags": {
+        "displayName": "Log Analytics Workspace for demo",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "Log Analytics",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "monitoring",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      }
+    }
+  ],
+  "outputs": {
+    "customerId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.OperationalInsights/workspaces', variables('logAnalyticsName')), '2015-11-01-preview').customerId]"
+    }
+  }
+}

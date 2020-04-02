@@ -1,0 +1,107 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "serviceBusNameSpace": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-sb-', parameters('infra').region)]",
+    "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
+    "logAnalyticsWorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.ServiceBus/namespaces",
+      "apiVersion": "2017-04-01",
+      "name": "[variables('serviceBusNameSpace')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Service Bus for demo",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "ServiceBus",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "messaging",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      },
+      "sku": {
+        "name": "Standard",
+        "tier": "Standard"
+      },
+      "properties": {
+        "metricId": "[concat('subscription().subscriptionId:', variables('serviceBusNameSpace'))]",
+        "serviceBusEndpoint": "[concat('https://', variables('serviceBusNameSpace'), '.servicebus.windows.net:443/')]",
+        "status": "Active"
+      },
+      "resources": [
+        {
+          "type": "providers/diagnosticSettings",
+          "name": "[concat('/Microsoft.Insights/', variables('serviceBusNameSpace'), '-logs')]",
+          "apiVersion": "2017-05-01-preview",
+          "tags": {
+            "displayName": "LogAnalytics",
+            "createdBy": "[parameters('releaseInfo')]"
+          },
+          "properties": {
+            "workspaceId": "[variables('logAnalyticsWorkspaceResourceId')]",
+            "logs": [
+              {
+                "category": "OperationalLogs",
+                "enabled": true
+              }
+            ],
+            "metrics": [
+              {
+                "category": "AllMetrics",
+                "enabled": true
+              }
+            ]
+          },
+          "dependsOn": [
+            "[variables('serviceBusNameSpace')]"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
+      "apiVersion": "2017-04-01",
+      "name": "[concat(variables('serviceBusNameSpace'), '/RootManageSharedAccessKey')]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusNameSpace'))]"
+      ],
+      "properties": {
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
+      }
+    }
+  ],
+  "outputs": {}
+}
