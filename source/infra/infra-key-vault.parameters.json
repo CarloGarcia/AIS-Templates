@@ -8,7 +8,7 @@
     "infra": {
       "value": {
         "environment": "#{Infra.Environment}#",
-        "region": "we",
+        "region": "#{Infra.Region}#",
         "project": "#{Infra.Project}#",
         "automationServicePrincipal": "#{Infra.AutomationSP}#"
       }
