@@ -34,14 +34,14 @@
       "location": "[resourceGroup().location]",
       "tags": {
         "displayName": "Application Insights",
-        "application": "Demo",
+        "application": "[parameters('infra').project]",
         "business": "ACME",
         "component": "ApplicationInsights",
         "environment": "[parameters('infra').environment]",
         "location": "[parameters('infra').region]",
         "role": "monitoring",
         "schedule": "none",
-        "system": "Demo",
+        "system": "[parameters('infra').project]",
         "Release": "[parameters('releaseInfo')]",
         "Release date": "[parameters('deploymentDateTime')]"
       },

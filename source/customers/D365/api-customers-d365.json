@@ -1,0 +1,203 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]",
+    "apiManagementLoggerName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-appins-', parameters('infra').region)]",
+    "apiManagementLoggerId": "[concat(resourceGroup().id,'/providers/Microsoft.ApiManagement/service/',variables('apiManagementServiceName'),'/loggers/',variables('apiManagementLoggerName'))]",
+    "logicAppName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-customers-d365-', parameters('infra').region)]",
+    "logicAppResourceGroupName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-customers-d365-', parameters('infra').region)]",
+    "authorizationServerId": "d365-tst-oauth"
+  },
+  "resources": [
+    {
+      "properties": {
+        "authenticationSettings": {
+          "subscriptionKeyRequired": true
+        },
+        "subscriptionKeyParameterNames": {
+          "header": "Ocp-Apim-Subscription-Key",
+          "query": "subscription-key"
+        },
+        "apiRevision": "1",
+        "subscriptionRequired": true,
+        "displayName": "Customers",
+        "path": "Customers",
+        "protocols": [
+          "https"
+        ]
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/customers')]",
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": []
+    },
+    {
+      "properties": {
+        "templateParameters": [],
+        "description": "Post",
+        "request": {
+          "queryParameters": [],
+          "headers": []
+        },
+        "responses": [
+          {
+            "statusCode": "202",
+            "description": "Message Accepted.",
+            "headers": []
+          },
+          {
+            "statusCode": "400",
+            "description": "Error response",
+            "headers": []
+          }
+        ],
+        "displayName": "Post",
+        "method": "POST",
+        "urlTemplate": "/"
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/customers/post')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    },
+    {
+      "properties": {
+        "policyContent": "<policies>\r\n\t<inbound>\r\n\t\t<base />\r\n\t\t<set-backend-service id=\"apim-generated-policy\" base-url=\"{{customers_post_logicapp_url}}\" />\r\n\t\t<set-method id=\"apim-generated-policy\">POST</set-method>\r\n\t\t<rewrite-uri id=\"apim-generated-policy\" template=\"?api-version=2016-06-01&amp;sp=/triggers/request/run&amp;sv=1.0&amp;sig={{customers_post_logicapp_sig}}\" />\r\n\t\t<set-header id=\"apim-generated-policy\" name=\"Ocp-Apim-Subscription-Key\" exists-action=\"delete\" />\r\n\t\t<!--\r\n        <validate-jwt header-name=\"Authorization\" failed-validation-httpcode=\"401\" failed-validation-error-message=\"Unauthorized\" require-expiration-time=\"true\" require-scheme=\"Bearer\" require-signed-tokens=\"true\" clock-skew=\"0\">\r\n            <openid-config url=\"https://login.microsoftonline.com/joulesgroup.onmicrosoft.com/.well-known/openid-configuration\" />\r\n            <issuer-signing-keys>\r\n                <key>Base64 Encoded Key</key>\r\n            </issuer-signing-keys>\r\n            <audiences>\r\n                <audience></audience>\r\n            </audiences>\r\n            <issuers>\r\n                <issuer></issuer>\r\n            </issuers>\r\n            <required-claims>\r\n                <claim name=\"aut\" match=\"all\">\r\n                    <value>00000002-0000-0000-c000-000000000000</value>\r\n                </claim>\r\n            </required-claims>\r\n        </validate-jwt>\r\n        -->\r\n\t\t<set-header name=\"Authorization\" exists-action=\"delete\" />\r\n\t</inbound>\r\n\t<backend>\r\n\t\t<base />\r\n\t</backend>\r\n\t<outbound>\r\n\t\t<base />\r\n\t\t<set-header id=\"x-ms-workflow-run-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-correlation-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-client-tracking-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-trigger-history-name\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-execution-location\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-workflow-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-workflow-version\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-workflow-name\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-workflow-system-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-tracking-id\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-ratelimit-burst-remaining-workflow-writes\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-ratelimit-remaining-workflow-download-contentsize\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-ratelimit-remaining-workflow-upload-contentsize\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-ratelimit-time-remaining-directapirequests\" name=\"del\" exists-action=\"delete\" />\r\n\t\t<set-header id=\"x-ms-request-id\" name=\"del\" exists-action=\"delete\" />\r\n\t</outbound>\r\n\t<on-error>\r\n\t\t<base />\r\n\t</on-error>\r\n</policies>",
+        "contentFormat": "xml"
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/customers/post/policy')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', variables('apiManagementServiceName'), 'customers', 'post')]",
+        "[resourceId('Microsoft.ApiManagement/service/properties', variables('apiManagementServiceName'), 'customers_post_logicapp_sig')]",
+        "[resourceId('Microsoft.ApiManagement/service/properties', variables('apiManagementServiceName'), 'customers_post_logicapp_url')]"
+
+      ]
+    },
+    {
+      "properties": {
+        "policyContent": "<policies>\r\n\t<inbound>\r\n\t\t<base />\r\n\t</inbound>\r\n\t<backend>\r\n\t\t<base />\r\n\t</backend>\r\n\t<outbound>\r\n\t\t<base />\r\n\t</outbound>\r\n\t<on-error>\r\n\t\t<base />\r\n\t</on-error>\r\n</policies>",
+        "contentFormat": "xml"
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/customers/policy')]",
+      "type": "Microsoft.ApiManagement/service/apis/policies",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    },
+    {
+      "name": "[concat(variables('apiManagementServiceName'), '/demo-',parameters('infra').environment,'/customers')]",
+      "type": "Microsoft.ApiManagement/service/products/apis",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    },
+    {
+      "apiVersion": "2018-06-01-preview",
+      "type": "Microsoft.ApiManagement/service/properties",
+      "name": "[concat(variables('apiManagementServiceName'), '/customers_post_logicapp_sig')]",
+      "properties": {
+        "displayName": "customers_post_logicapp_sig",
+        "value": "[listCallbackUrl(resourceId(variables('logicAppResourceGroupName'), 'Microsoft.Logic/workflows/triggers', variables('logicAppName'), 'request'), '2016-06-01').queries.sig]",
+        "tags": null,
+        "secret": true
+      },
+      "tags": {
+        "displayName": "New Customer Logic App Sig"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    },
+    {
+      "apiVersion": "2018-06-01-preview",
+      "type": "Microsoft.ApiManagement/service/properties",
+      "name": "[concat(variables('apiManagementServiceName'), '/customers_post_logicapp_url')]",
+      "properties": {
+        "displayName": "customers_post_logicapp_url",
+        "value": "[listCallbackUrl(resourceId(variables('logicAppResourceGroupName'), 'Microsoft.Logic/workflows/triggers', variables('logicAppName'), 'request'), '2016-06-01').basePath]",
+        "tags": null,
+        "secret": false
+      },
+      "tags": {
+        "displayName": "New Customer Logic App Url"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    },
+    {
+      "properties": {
+        "alwaysLog": "allErrors",
+        "loggerId": "[parameters('apiManagementLoggerId')]",
+        "sampling": {
+          "samplingType": "fixed",
+          "percentage": 5.0
+        },
+        "frontend": {
+          "request": {
+            "headers": [],
+            "body": {
+              "bytes": 0
+            }
+          },
+          "response": {
+            "headers": [],
+            "body": {
+              "bytes": 0
+            }
+          }
+        },
+        "backend": {
+          "request": {
+            "headers": [],
+            "body": {
+              "bytes": 0
+            }
+          },
+          "response": {
+            "headers": [],
+            "body": {
+              "bytes": 0
+            }
+          }
+        },
+        "enableHttpCorrelationHeaders": true
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/customers/applicationinsights')]",
+      "type": "Microsoft.ApiManagement/service/apis/diagnostics",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'customers')]"
+      ]
+    }
+  ]
+}
