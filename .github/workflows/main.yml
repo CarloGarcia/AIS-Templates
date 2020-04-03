@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+    - uses: actions/checkout@v2
+
+    - name: Azure Resource Manager (ARM) Template Deployment
+      uses: whiteducksoftware/azure-arm-action-js@v1
+      with:
+        resourceGroupName: dev-demo-infra-ne
+        templateLocation: /source/infra/infra-log-analytics.json
+        deploymentMode: Incremental
+        deploymentName: infra-log-analytics
+        parameters: /source/infra/infra-log-analytics.parameters.json
