@@ -19,7 +19,7 @@ jobs:
       uses: whiteducksoftware/azure-arm-action-js@v1
       with:
         resourceGroupName: dev-demo-infra-ne
-        templateLocation: /source/infra/infra-log-analytics.json
+        templateLocation: source/infra/infra-log-analytics.json
         deploymentMode: Incremental
         deploymentName: infra-log-analytics
-        parameters: /source/infra/infra-log-analytics.parameters.json
+        parameters: source/infra/infra-log-analytics.parameters.json
