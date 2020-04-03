@@ -1,0 +1,57 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('dd-MMM-yyyy HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "appInsightsName": "[concat(parameters('infra').environment, '-demo-appins-',parameters('infra').region)]"
+  },
+  "resources": [
+    {
+      "type": "microsoft.insights/components",
+      "apiVersion": "2015-05-01",
+      "name": "[variables('appInsightsName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "Application Insights",
+        "application": "Demo",
+        "business": "ACME",
+        "component": "ApplicationInsights",
+        "environment": "[parameters('infra').environment]",
+        "location": "[parameters('infra').region]",
+        "role": "monitoring",
+        "schedule": "none",
+        "system": "Demo",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      },
+      "kind": "web",
+      "properties": {
+        "Application_Type": "other",
+        "Flow_Type": "Redfield",
+        "Request_Source": "IbizaAIExtension"
+      }
+    }
+  ],
+  "outputs": {}
+}
