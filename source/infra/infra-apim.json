@@ -118,7 +118,7 @@
     {
       "type": "Microsoft.ApiManagement/service/loggers",
       "apiVersion": "2019-12-01-preview",
-      "name": "[concat(variables('apiManagementServiceName'), '/dev-demo-logs-ne')]",
+      "name": "[concat(variables('apiManagementServiceName'), '/', variables('appInsightsName'))]",
       "dependsOn": [
         "[resourceId('Microsoft.ApiManagement/service', variables('apiManagementServiceName'))]"
       ],
