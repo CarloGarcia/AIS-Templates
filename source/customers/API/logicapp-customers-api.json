@@ -21,6 +21,9 @@
         "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
       },
       "type": "string"
+    },
+    "serviceBusConnectionString":{
+      "type": "securestring"
     }
   },
   "variables": {
@@ -29,7 +32,8 @@
     "infraResourceGroup": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-infra-', parameters('infra').region)]",
     "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
     "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]",
-    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]"
+    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]",
+    "keyVaultName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-kv-', parameters('infra').region)]"
   },
   "resources": [
     {
@@ -54,8 +58,67 @@
         "state": "Enabled",
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {},
+          "actions": {
+            "Response": {
+              "type": "Response",
+              "inputs": {
+                "statusCode": 200
+              },
+              "runAfter": {
+                "Scope": [
+                  "Succeeded"
+                ]
+              }
+            },
+            "Scope": {
+              "type": "Scope",
+              "actions": {
+                "Send_message": {
+                  "type": "ApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connection": {
+                        "name": "@parameters('$connections')['servicebus']['connectionId']"
+                      }
+                    },
+                    "method": "post",
+                    "body": {
+                      "ContentData": "@{base64(triggerBody())}",
+                      "Properties": {
+                        "clientTrackingId": "@{coalesce(triggerOutputs().headers?['x-my-custom-correlation-id'], guid())}"
+                      }
+                    },
+                    "path": "/@{encodeURIComponent(encodeURIComponent('customers'))}/messages",
+                    "queries": {
+                      "systemProperties": "Run Details"
+                    }
+                  },
+                  "runAfter": {}
+                }
+              },
+              "runAfter": {}
+            },
+            "Error_Response": {
+              "type": "Response",
+              "kind": "http",
+              "inputs": {
+                "statusCode": 502
+              },
+              "runAfter": {
+                "Scope": [
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              }
+            }
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {},
+              "type": "Object"
+            }
+          },
           "triggers": {
             "request": {
               "type": "Request",
@@ -65,18 +128,20 @@
               }
             }
           },
-          "actions": {
-            "Response": {
-              "runAfter": {},
-              "type": "Response",
-              "inputs": {
-                "statusCode": 200
-              }
-            }
-          },
+          "contentVersion": "1.0.0.0",
           "outputs": {}
         },
-        "parameters": {},
+        "parameters": {
+          "$connections": {
+            "value": {
+              "servicebus": {
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections/', 'servicebus')]",
+                "connectionName": "servicebus"
+              }
+            }
+          }
+        },
         "accessControl": {
           "triggers": {
             "allowedCallerIpAddresses": [
@@ -118,7 +183,25 @@
             "[variables('logicAppResourceId')]"
           ]
         }
+      ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/connections', 'servicebus')]"
       ]
+    },
+    {
+      "type": "MICROSOFT.WEB/CONNECTIONS",
+      "apiVersion": "2018-07-01-preview",
+      "name": "servicebus",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "api": {
+          "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]"
+        },
+        "displayName": "servicebus",
+        "parameterValues": {
+          "connectionString": "[parameters('serviceBusConnectionString')]"
+        }
+      }
     }
   ]
 }
