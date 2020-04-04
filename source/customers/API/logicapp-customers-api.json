@@ -32,8 +32,7 @@
     "infraResourceGroup": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-infra-', parameters('infra').region)]",
     "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
     "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]",
-    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]",
-    "keyVaultName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-kv-', parameters('infra').region)]"
+    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]"
   },
   "resources": [
     {
