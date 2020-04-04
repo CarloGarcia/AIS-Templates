@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "infra": {
+            "type": "object",
+            "metadata": {
+                "description": "Provide the object that contain all information about common infrastructure"
+            }
+        },
+        "releaseInfo": {
+            "defaultValue": "",
+            "type": "string",
+            "metadata": {
+                "description": "Provide info about the release that deployed this resource."
+            }
+        },
+        "deploymentDateTime": {
+            "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+            "metadata": {
+                "description": "Date and time of deployment to be inserted into tags for resource."
+            },
+            "type": "string"
+        },
+        "topicName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the topic"
+            }
+        }
+    },
+    "variables": {
+        "serviceBusNameSpace": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-sb-', parameters('infra').region)]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.ServiceBus/namespaces/topics",
+            "apiVersion": "2017-04-01",
+            "name": "[concat(variables('serviceBusNameSpace'), '/', parameters('topicName'))]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+            ],
+            "properties": {
+                "defaultMessageTimeToLive": "P14D",
+                "maxSizeInMegabytes": 1024,
+                "requiresDuplicateDetection": false,
+                "duplicateDetectionHistoryTimeWindow": "PT10M",
+                "enableBatchedOperations": true,
+                "status": "Active",
+                "supportOrdering": true,
+                "autoDeleteOnIdle": "P10675199DT2H48M5.4775807S",
+                "enablePartitioning": false,
+                "enableExpress": false
+            },
+            "tags": {
+                "displayName": "Service Bus Topic",
+                "application": "[parameters('infra').project]",
+                "business": "ACME",
+                "component": "ServiceBusTopic",
+                "environment": "[parameters('infra').environment]",
+                "location": "[resourceGroup().location]",
+                "role": "messaging",
+                "schedule": "none",
+                "system": "[parameters('infra').project]",
+                "Release": "[parameters('releaseInfo')]",
+                "Release date": "[parameters('deploymentDateTime')]"
+            }
+        }
+    ]
+}
