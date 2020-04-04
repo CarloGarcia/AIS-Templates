@@ -67,7 +67,8 @@
   "variables": {
     "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]",
     "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
-    "logAnalyticsWorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+    "logAnalyticsWorkspaceResourceId": "[resourceId('microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]",
+    "appInsightsName": "[concat(parameters('infra').environment, '-demo-appins-',parameters('infra').region)]"
   },
   "resources": [
     {
@@ -112,6 +113,21 @@
             "enabled": true
           }
         ]
+      }
+    },
+    {
+      "type": "Microsoft.ApiManagement/service/loggers",
+      "apiVersion": "2019-12-01-preview",
+      "name": "[concat(variables('apiManagementServiceName'), '/dev-demo-logs-ne')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service', variables('apiManagementServiceName'))]"
+      ],
+      "properties": {
+        "loggerType": "applicationInsights",
+        "isBuffered": true,
+        "credentials": {
+          "instrumentationKey": "[reference(resourceId('microsoft.insights/components', variables('appInsightsName')),'2015-05-01','Full').properties.InstrumentationKey]"
+        }
       }
     }
   ]
