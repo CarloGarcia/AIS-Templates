@@ -11,6 +11,14 @@
         "region": "#{Infra.Region}#",
         "project": "#{Infra.Project}#"
       }
+    },
+    "serviceBusConnectionString":{
+      "reference": {
+        "keyVault": {
+          "id": "#{Infra.KeyVault.ResourceId}#"
+        },
+        "secretName": "Service-Bus-Connection-String"
+      }
     }
   }
 }
