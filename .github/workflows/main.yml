@@ -27,7 +27,7 @@ jobs:
         inlineScript: |
           az account show
           az group create --name $environment-$project-infra-$region --location $location
-          az deployment group create --resource-group $environment-$project-infra-$region --template-file source/infra/infra-log-analytics.json --parameters source/infra/infra-log-analytics.parameters.json
+          az group deployent validate --resource-group $environment-$project-infra-$region --template-file source/infra/infra-log-analytics.json --parameters source/infra/infra-log-analytics.parameters.json
     - name: Azure Resource Manager (ARM) Template Deployment
       uses: whiteducksoftware/azure-arm-action-js@v1
       with:
