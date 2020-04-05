@@ -1,0 +1,136 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "infra": {
+      "type": "object",
+      "metadata": {
+        "description": "Provide the object that contain all information about common infrastructure"
+      }
+    },
+    "releaseInfo": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "Provide info about the release that deployed this resource."
+      }
+    },
+    "deploymentDateTime": {
+      "defaultValue": "[utcNow('yyyy-MMM-dd HH:mm:ss')]",
+      "metadata": {
+        "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
+      },
+      "type": "string"
+    }
+  },
+  "variables": {
+    "apiManagementServiceName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-apim-', parameters('infra').region)]"
+  },
+  "resources": [
+    {
+      "properties": {
+        "description": "",
+        "authenticationSettings": {
+          "subscriptionKeyRequired": false
+        },
+        "subscriptionKeyParameterNames": {
+          "header": "Ocp-Apim-Subscription-Key",
+          "query": "subscription-key"
+        },
+        "apiRevision": "1",
+        "subscriptionRequired": true,
+        "displayName": "ERP Stub",
+        "path": "erp",
+        "protocols": [
+          "https"
+        ]
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/erpstub')]",
+      "type": "Microsoft.ApiManagement/service/apis",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+      ],
+      "tags": {
+        "displayName": "Stub API",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "APIM",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "API",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      }
+    },
+    {
+      "properties": {
+        "templateParameters": [
+        ],
+        "description": "",
+        "request": {
+          "queryParameters": [
+          ],
+          "headers": [
+          ]
+        },
+        "responses": [
+          {
+            "statusCode": "201",
+            "description": "",
+            "headers": [
+            ]
+          }
+        ],
+        "displayName": "Post",
+        "method": "POST",
+        "urlTemplate": "/customers/"
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/erpstub/post')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis', variables('apiManagementServiceName'), 'erpstub')]"
+      ],
+      "tags": {
+        "displayName": "Post Operation",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "APIM",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "API",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      }
+    },
+    {
+      "properties": {
+        "policyContent": "<policies>\r\n\t<inbound>\r\n\t\t<base />\r\n\t\t<mock-response status-code=\"201\" content-type=\"application/json\" />\r\n\t</inbound>\r\n\t<backend>\r\n\t\t<base />\r\n\t</backend>\r\n\t<outbound>\r\n\t\t<base />\r\n\t</outbound>\r\n\t<on-error>\r\n\t\t<base />\r\n\t</on-error>\r\n</policies>",
+        "contentFormat": "xml"
+      },
+      "name": "[concat(variables('apiManagementServiceName'), '/erpstub/post/policy')]",
+      "type": "Microsoft.ApiManagement/service/apis/operations/policies",
+      "apiVersion": "2018-06-01-preview",
+      "dependsOn": [
+        "[resourceId('Microsoft.ApiManagement/service/apis/operations', variables('apiManagementServiceName'), 'erpstub', 'post')]"
+      ],
+      "tags": {
+        "displayName": "Post Operation Policy",
+        "application": "[parameters('infra').project]",
+        "business": "ACME",
+        "component": "APIM",
+        "environment": "[parameters('infra').environment]",
+        "location": "[resourceGroup().location]",
+        "role": "API",
+        "schedule": "none",
+        "system": "[parameters('infra').project]",
+        "Release": "[parameters('releaseInfo')]",
+        "Release date": "[parameters('deploymentDateTime')]"
+      }
+    }
+  ]
+}
