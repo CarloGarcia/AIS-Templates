@@ -23,7 +23,7 @@ jobs:
     - name: Azure CLI script
       uses: azure/CLI@v1
       with:
-        azcliversion: 2.0.0
+        azcliversion: latest
         inlineScript: |
           az account show
           az group create --name $environment-$project-infra-$region --location $location
