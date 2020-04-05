@@ -21,6 +21,15 @@
         "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
       },
       "type": "string"
+    },
+    "erp": {
+      "type": "object",
+      "metadata": {
+        "description": "Details about the ERP system such as Url, api key header name, etc."
+      }
+    },
+    "apiKeyValue": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -28,7 +37,8 @@
     "logicAppResourceId": "[resourceId('Microsoft.Logic/workflows', variables('logicAppName'))]",
     "infraResourceGroup": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-infra-', parameters('infra').region)]",
     "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
-    "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+    "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]",
+    "keyVaultName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-kv-', parameters('infra').region)]"
   },
   "resources": [
     {
@@ -77,10 +87,17 @@
               "inputs": {
                 "body": "@base64ToString(triggerBody()?['ContentData'])",
                 "headers": {
-                  "Ocp-Apim-Subscription-Key": "f0d95664ecb74c289c783e793ea5eb8b"
+                  "[parameters('erp').apiKeyName]": "@parameters('erp_api_key')"
                 },
                 "method": "POST",
-                "uri": "https://dev-demo-apim-ne.azure-api.net/erp/customers/"
+                "uri": "[parameters('erp').url]"
+              },
+              "runtimeConfiguration": {
+                "secureData": {
+                  "properties": [
+                    "inputs"
+                  ]
+                }
               },
               "runAfter": {
                 "Complete_the_message_in_a_topic_subscription": [
@@ -101,6 +118,9 @@
               "defaultValue": {
               },
               "type": "Object"
+            },
+            "erp_api_key": {
+              "type": "securestring"
             }
           },
           "triggers": {
@@ -130,11 +150,14 @@
           "$connections": {
             "value": {
               "servicebus": {
-                "connectionId": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/resourceGroups/dev-demo-customers-erp-ne/providers/Microsoft.Web/connections/servicebus",
-                "connectionName": "servicebus",
-                "id": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/providers/Microsoft.Web/locations/northeurope/managedApis/servicebus"
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections/', 'servicebus')]",
+                "connectionName": "servicebus"
               }
             }
+          },
+          "erp_api_key": {
+            "value": "[parameters('apiKeyValue')]"
           }
         }
       },
@@ -166,7 +189,61 @@
             "[variables('logicAppResourceId')]"
           ]
         }
+      ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dynamicSecret')]"
       ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "dynamicSecret",
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "serviceBusConnectionString": {
+              "type": "securestring"
+            }
+          },
+          "variables": {
+          },
+          "resources": [
+            {
+              "type": "MICROSOFT.WEB/CONNECTIONS",
+              "apiVersion": "2018-07-01-preview",
+              "name": "servicebus",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "api": {
+                  "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]"
+                },
+                "displayName": "servicebus",
+                "parameterValues": {
+                  "connectionString": "[parameters('serviceBusConnectionString')]"
+                }
+              }
+            }
+          ],
+          "outputs": {
+          }
+        },
+        "parameters": {
+          "serviceBusConnectionString": {
+            "reference": {
+              "keyVault": {
+                "id": "[resourceId(variables('infraResourceGroup'), 'Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+              },
+              "secretName": "Service-Bus-Connection-String"
+            }
+          }
+        }
+      }
     }
   ]
 }
