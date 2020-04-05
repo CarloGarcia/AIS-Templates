@@ -28,3 +28,8 @@ jobs:
           az account show
           az group create --name $environment-$project-infra-$region --location $location
           az deployment group validate --resource-group $environment-$project-infra-$region --template-file source/infra/infra-log-analytics.json --parameters source/infra/infra-log-analytics.parameters.json
+    - uses: Azure/pipelines@v1
+      with:
+        azure-devops-project-url: 'https://dev.azure.com/CarloGarciaMier/AIS-Templates'
+        azure-pipeline-name: 'ACME.Infra'
+        azure-devops-token: '${{ secrets.AZURE_DEVOPS_TOKEN }}'
