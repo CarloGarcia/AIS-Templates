@@ -21,6 +21,15 @@
         "description": "Date and time of deployment to be inserted into tags for the Logic App resource."
       },
       "type": "string"
+    },
+    "erp": {
+      "type": "object",
+      "metadata": {
+        "description": "Details about the ERP system such as Url, api key header name, etc."
+      }
+    },
+    "apiKeyValue": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -78,10 +87,17 @@
               "inputs": {
                 "body": "@base64ToString(triggerBody()?['ContentData'])",
                 "headers": {
-                  "Ocp-Apim-Subscription-Key": "f0d95664ecb74c289c783e793ea5eb8b"
+                  "[parameters('erp').apiKeyName]": "@parameters('erp_api_key')"
                 },
                 "method": "POST",
-                "uri": "https://dev-demo-apim-ne.azure-api.net/erp/customers/"
+                "uri": "[parameters('erp').url]"
+              },
+              "runtimeConfiguration": {
+                "secureData": {
+                  "properties": [
+                    "inputs"
+                  ]
+                }
               },
               "runAfter": {
                 "Complete_the_message_in_a_topic_subscription": [
@@ -102,6 +118,9 @@
               "defaultValue": {
               },
               "type": "Object"
+            },
+            "erp_api_key": {
+              "type": "securestring"
             }
           },
           "triggers": {
@@ -136,6 +155,9 @@
                 "connectionName": "servicebus"
               }
             }
+          },
+          "erp_api_key": {
+            "value": "[parameters('apiKeyValue')]"
           }
         }
       },
@@ -189,7 +211,8 @@
               "type": "securestring"
             }
           },
-          "variables": {},
+          "variables": {
+          },
           "resources": [
             {
               "type": "MICROSOFT.WEB/CONNECTIONS",
@@ -207,7 +230,8 @@
               }
             }
           ],
-          "outputs": {}
+          "outputs": {
+          }
         },
         "parameters": {
           "serviceBusConnectionString": {
