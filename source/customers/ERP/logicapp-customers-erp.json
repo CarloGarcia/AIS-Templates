@@ -28,7 +28,8 @@
     "logicAppResourceId": "[resourceId('Microsoft.Logic/workflows', variables('logicAppName'))]",
     "infraResourceGroup": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-infra-', parameters('infra').region)]",
     "logAnalyticsName": "[concat(parameters('infra').environment,'-', parameters('infra').project, '-logs-', parameters('infra').region)]",
-    "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]"
+    "logAnalyticsWorkspaceResourceId": "[resourceId(variables('infraResourceGroup'), 'microsoft.operationalinsights/workspaces', variables('logAnalyticsName'))]",
+    "keyVaultName": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-kv-', parameters('infra').region)]"
   },
   "resources": [
     {
@@ -130,9 +131,9 @@
           "$connections": {
             "value": {
               "servicebus": {
-                "connectionId": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/resourceGroups/dev-demo-customers-erp-ne/providers/Microsoft.Web/connections/servicebus",
-                "connectionName": "servicebus",
-                "id": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/providers/Microsoft.Web/locations/northeurope/managedApis/servicebus"
+                "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]",
+                "connectionId": "[resourceId('Microsoft.Web/connections/', 'servicebus')]",
+                "connectionName": "servicebus"
               }
             }
           }
@@ -166,7 +167,59 @@
             "[variables('logicAppResourceId')]"
           ]
         }
+      ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments', 'dynamicSecret')]"
       ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-05-01",
+      "name": "dynamicSecret",
+      "properties": {
+        "mode": "Incremental",
+        "expressionEvaluationOptions": {
+          "scope": "inner"
+        },
+        "template": {
+          "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+          "contentVersion": "1.0.0.0",
+          "parameters": {
+            "serviceBusConnectionString": {
+              "type": "securestring"
+            }
+          },
+          "variables": {},
+          "resources": [
+            {
+              "type": "MICROSOFT.WEB/CONNECTIONS",
+              "apiVersion": "2018-07-01-preview",
+              "name": "servicebus",
+              "location": "[resourceGroup().location]",
+              "properties": {
+                "api": {
+                  "id": "[concat(subscription().id, '/providers/Microsoft.Web/locations/', resourceGroup().location, '/managedApis/', 'servicebus')]"
+                },
+                "displayName": "servicebus",
+                "parameterValues": {
+                  "connectionString": "[parameters('serviceBusConnectionString')]"
+                }
+              }
+            }
+          ],
+          "outputs": {}
+        },
+        "parameters": {
+          "serviceBusConnectionString": {
+            "reference": {
+              "keyVault": {
+                "id": "[resourceId(variables('infraResourceGroup'), 'Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
+              },
+              "secretName": "Service-Bus-Connection-String"
+            }
+          }
+        }
+      }
     }
   ]
 }
