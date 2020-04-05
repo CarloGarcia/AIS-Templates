@@ -53,29 +53,90 @@
         "state": "Enabled",
         "definition": {
           "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
-          "contentVersion": "1.0.0.0",
-          "parameters": {},
-          "triggers": {
-            "request": {
-              "type": "Request",
-              "kind": "Http",
-              "inputs": {
-                "schema": {}
-              }
-            }
-          },
           "actions": {
-            "Response": {
-              "runAfter": {},
-              "type": "Response",
+            "Complete_the_message_in_a_topic_subscription": {
               "inputs": {
-                "statusCode": 200
-              }
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['servicebus']['connectionId']"
+                  }
+                },
+                "method": "delete",
+                "path": "/@{encodeURIComponent(encodeURIComponent('customers'))}/subscriptions/@{encodeURIComponent('erp')}/messages/complete",
+                "queries": {
+                  "lockToken": "@triggerBody()?['LockToken']",
+                  "sessionId": "",
+                  "subscriptionType": "Main"
+                }
+              },
+              "runAfter": {
+              },
+              "type": "ApiConnection"
+            },
+            "HTTP": {
+              "inputs": {
+                "body": "@base64ToString(triggerBody()?['ContentData'])",
+                "headers": {
+                  "Ocp-Apim-Subscription-Key": "f0d95664ecb74c289c783e793ea5eb8b"
+                },
+                "method": "POST",
+                "uri": "https://dev-demo-apim-ne.azure-api.net/erp/customers/"
+              },
+              "runAfter": {
+                "Complete_the_message_in_a_topic_subscription": [
+                  "Succeeded",
+                  "Failed",
+                  "Skipped",
+                  "TimedOut"
+                ]
+              },
+              "type": "Http"
             }
           },
-          "outputs": {}
+          "contentVersion": "1.0.0.0",
+          "outputs": {
+          },
+          "parameters": {
+            "$connections": {
+              "defaultValue": {
+              },
+              "type": "Object"
+            }
+          },
+          "triggers": {
+            "When_a_message_is_received_in_a_topic_subscription_(peek-lock)": {
+              "inputs": {
+                "host": {
+                  "connection": {
+                    "name": "@parameters('$connections')['servicebus']['connectionId']"
+                  }
+                },
+                "method": "get",
+                "path": "/@{encodeURIComponent(encodeURIComponent('customers'))}/subscriptions/@{encodeURIComponent('erp')}/messages/head/peek",
+                "queries": {
+                  "sessionId": "None",
+                  "subscriptionType": "Main"
+                }
+              },
+              "recurrence": {
+                "frequency": "Minute",
+                "interval": 1
+              },
+              "type": "ApiConnection"
+            }
+          }
         },
-        "parameters": {}
+        "parameters": {
+          "$connections": {
+            "value": {
+              "servicebus": {
+                "connectionId": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/resourceGroups/dev-demo-customers-erp-ne/providers/Microsoft.Web/connections/servicebus",
+                "connectionName": "servicebus",
+                "id": "/subscriptions/5035f8d5-9b96-4804-8c8b-14dffc1afc71/providers/Microsoft.Web/locations/northeurope/managedApis/servicebus"
+              }
+            }
+          }
+        }
       },
       "resources": [
         {
