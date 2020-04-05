@@ -8,13 +8,21 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v2
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.0.72
+        inlineScript: |
+          az account show
+          az group create --name dev-demo-infra-ne --location northeurope
+          az deployment group create --resource-group dev-demo-infra-ne --template-file source/infra/infra-log-analytics.json --parameters source/infra/infra-log-analytics.parameters.json
     - name: Azure Resource Manager (ARM) Template Deployment
       uses: whiteducksoftware/azure-arm-action-js@v1
       with:
