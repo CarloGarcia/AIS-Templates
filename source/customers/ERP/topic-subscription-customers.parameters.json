@@ -12,14 +12,11 @@
         "project": "#{Infra.Project}#"
       }
     },
-    "erp":{
-      "value": {
-        "url":"#{ERP.Url}#",
-        "apiKeyName":"Ocp-Apim-Subscription-Key"
-      }
+    "topicName": {
+      "value": "customers"
     },
-    "apiKeyValue": {
-      "value": "#{EPR.apiKey}#"
+    "subscriptionName": {
+      "value": "erp"
     }
   }
 }
