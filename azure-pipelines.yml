@@ -1,19 +1,19 @@
 trigger:
   - feature/cgm/yaml-pipelines #master
   
-  pool:
-    vmImage: 'ubuntu-latest'
+pool:
+  vmImage: 'ubuntu-latest'
   
-  variables:   
-    - group: Infra.Dev
+variables:   
+  - group: Infra.Dev
   
-  stages:
-  - stage: Build
-    displayName: CI - Validate ARM Templates
-    jobs:
-    - job: Validate
-      displayName: Validate ARM Templates
-      steps:
-      - template: templates/infra-build.yaml
+stages:
+- stage: Build
+  displayName: CI - Validate ARM Templates
+  jobs:
+  - job: Validate
+    displayName: Validate ARM Templates
+    steps:
+    - template: templates/infra-build.yaml
        
   
