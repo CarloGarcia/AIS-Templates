@@ -1,0 +1,36 @@
+steps:
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: 'Replace tokens in source/customers/*.json'
+  inputs:
+    rootDirectory: 'source/customers/'
+    targetFiles: 'source/customers/*.json'    
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Deploy Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/infra/infra-service-bus-topic.json'
+    csmParametersFile: 'source/customers/topic-customers.parameters.json'
+    deploymentMode: Incremental
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/customers/logicapp-customers-api.json'
+    csmParametersFile: 'source/customers/logicapp-customers-api.parameters.json'
+    deploymentMode: Incremental
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Deploy Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/customers/apim-customers-api.json'
+    csmParametersFile: 'source/customers/apim-customers-api.parameters.json'
+    deploymentMode: Incremental
