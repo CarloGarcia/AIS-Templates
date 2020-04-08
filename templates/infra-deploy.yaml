@@ -6,7 +6,7 @@ steps:
     targetFiles: 'source/infra/*.json'
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Validate infra-log-analytics on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-log-analytics on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
@@ -16,7 +16,7 @@ steps:
     deploymentMode: Incremental   
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Validate infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
@@ -26,7 +26,7 @@ steps:
     deploymentMode: Incremental
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Validate infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
@@ -36,7 +36,7 @@ steps:
     deploymentMode: Validation     
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Validate infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
@@ -46,7 +46,7 @@ steps:
     deploymentMode: Validation  
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Validate infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
