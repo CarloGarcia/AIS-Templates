@@ -23,6 +23,5 @@ stages:
     displayName: Deploy Infra
     steps:
     - template: templates/infra-deploy.yaml
-
-       
-  
+    - template: templates/customers-api-deploy.yaml
+    - template: templates/customers-api-deploy.yaml
