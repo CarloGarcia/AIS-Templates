@@ -6,51 +6,51 @@ steps:
     targetFiles: '**/*.json'
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy infra-log-analytics on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-log-analytics on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-    location: 'North Europe'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-log-analytics.json'
     csmParametersFile: 'source/infra/infra-log-analytics.parameters.json'
     deploymentMode: Incremental   
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-    location: 'North Europe'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-app-insights.json'
     csmParametersFile: 'source/infra/infra-app-insights.parameters.json'
     deploymentMode: Incremental
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-    location: 'North Europe'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-service-bus.json'
     csmParametersFile: 'source/infra/infra-service-bus.parameters.json'
     deploymentMode: Incremental     
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-    location: 'North Europe'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-key-vault.json'
     csmParametersFile: 'source/infra/infra-key-vault.parameters.json'
     deploymentMode: Incremental  
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  displayName: 'Deploy infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-    location: 'North Europe'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-apim.json'
     csmParametersFile: 'source/infra/infra-apim.parameters.json'
     deploymentMode: Incremental
