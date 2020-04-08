@@ -4,7 +4,8 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
   
-variables:   
+variables:
+  - group: Azure     
   - group: Infra.Dev
   
 stages:
