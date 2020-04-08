@@ -2,8 +2,8 @@ steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
   displayName: 'Replace tokens in source/infra/*.json'
   inputs:
-    rootDirectory: 'source/infra/'
-    targetFiles: 'source/infra/*.json'
+    rootDirectory: 'source/infra'
+    targetFiles: '**/*.json'
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Deploy infra-log-analytics on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
