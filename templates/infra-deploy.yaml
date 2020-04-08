@@ -13,65 +13,44 @@ steps:
     location: 'North Europe'
     csmFile: 'source/infra/infra-log-analytics.json'
     csmParametersFile: 'source/infra/infra-log-analytics.parameters.json'
-    deploymentMode: Validation   
+    deploymentMode: Incremental   
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#    csmFile: 'source/infra/infra-apim.json'
-#    csmParametersFile: 'source/infra/infra-apim.parameters.json'
-#    deploymentMode: Validation
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/infra/infra-app-insights.json'
+    csmParametersFile: 'source/infra/infra-app-insights.parameters.json'
+    deploymentMode: Incremental
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-app-insights on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.parameters.json'
-#    deploymentMode: Validation    
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/infra/infra-service-bus.json'
+    csmParametersFile: 'source/infra/infra-service-bus.parameters.json'
+    deploymentMode: Validation     
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.parameters.json'
-#    deploymentMode: Validation   
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-key-vault on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/infra/infra-key-vault.json'
+    csmParametersFile: 'source/infra/infra-key-vault.parameters.json'
+    deploymentMode: Validation  
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-service-bus on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.parameters.json'
-#    deploymentMode: Validation
-
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-service-bus-topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#   csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.parameters.json'
-#    deploymentMode: Validation   
-
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-service-bus-topic-subscription on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
-#    location: 'North Europe'
-#    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.parameters.json'
-#    deploymentMode: Validation
-   
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Environment)'
+    location: 'North Europe'
+    csmFile: 'source/infra/infra-apim.json'
+    csmParametersFile: 'source/infra/infra-apim.parameters.json'
+    deploymentMode: Validation
