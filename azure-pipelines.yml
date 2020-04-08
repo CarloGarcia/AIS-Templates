@@ -1,0 +1,27 @@
+trigger:
+  - feature/cgm/yaml-pipelines #master
+  
+pool:
+  vmImage: 'ubuntu-latest'
+  
+variables:
+  - group: Azure     
+  - group: Infra.Dev
+  
+stages:
+- stage: Build
+  displayName: CI - Validate ARM Templates
+  jobs:
+  - job: Validate
+    displayName: Validate ARM Templates
+    steps:
+    - template: deploy/templates/infra-build.yaml
+- stage: Deploy
+  displayName: Deploy to DEV
+  jobs:
+  - job: Deploy
+    displayName: Deploy Infra
+    steps:
+    - template: deploy/templates/infra-deploy.yaml
+    - template: deploy/templates/customers-api-deploy.yaml
+    - template: deploy/templates/customers-api-deploy.yaml
