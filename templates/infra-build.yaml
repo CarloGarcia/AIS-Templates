@@ -2,7 +2,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Infra/Validation/'
   inputs:
-    SourceFolder: src/FCP.Common.Infra/FCP.Common.Infra/Resources
+    SourceFolder: source/infra
     Contents: '*.json'
     TargetFolder: '$(build.artifactstagingdirectory)/Infra/Validation/'
     CleanTargetFolder: true
