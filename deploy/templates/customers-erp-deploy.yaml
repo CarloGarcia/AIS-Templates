@@ -2,8 +2,8 @@ steps:
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
   displayName: 'Replace tokens in source/customers/ERP/*.json'
   inputs:
-    rootDirectory: 'source/customers/ERP/'
-    targetFiles: 'source/customers/ERP/*.json'    
+    rootDirectory: 'source/customers/ERP'
+    targetFiles: '**/*.json'    
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Deploy Customer Topic Subscription on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
