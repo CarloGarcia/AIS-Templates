@@ -16,5 +16,13 @@ stages:
     displayName: Validate ARM Templates
     steps:
     - template: templates/infra-build.yaml
+- stage: Deploy
+  displayName: Deploy to DEV
+  jobs:
+  - job: Deploy
+    displayName: Deploy Infra
+    steps:
+    - template: templates/infra-deploy.yaml
+
        
   
