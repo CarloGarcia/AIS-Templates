@@ -1,0 +1,87 @@
+steps:
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Infra/Validation/'
+  inputs:
+    SourceFolder: src/FCP.Common.Infra/FCP.Common.Infra/Resources
+    Contents: '*.json'
+    TargetFolder: '$(build.artifactstagingdirectory)/Infra/Validation/'
+    CleanTargetFolder: true
+    OverWrite: true
+
+- task: qetza.replacetokens.replacetokens-task.replacetokens@3
+  displayName: 'Replace tokens in $(build.artifactstagingdirectory)/Infra/Validation/*.json'
+  inputs:
+    rootDirectory: '$(build.artifactstagingdirectory)/Infra/Validation/'
+    targetFiles: '$(build.artifactstagingdirectory)/Infra/Validation/*.json'
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-apim on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-apim.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-apim.parameters.json'
+    deploymentMode: Validation
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-app-insights on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.parameters.json'
+    deploymentMode: Validation    
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-key-vault on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.parameters.json'
+    deploymentMode: Validation   
+ 
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-log-analytics on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-log-analytics.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-log-analytics.parameters.json'
+    deploymentMode: Validation   
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-service-bus on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.parameters.json'
+    deploymentMode: Validation
+
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-service-bus-topic on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.parameters.json'
+    deploymentMode: Validation   
+
+    
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-service-bus-topic-subscription on dev-demo-infra-ne'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: 'dev-demo-infra-ne'
+    location: 'North Europe'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.parameters.json'
+    deploymentMode: Validation
+    
