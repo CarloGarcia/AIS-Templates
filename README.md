@@ -5,4 +5,4 @@ Example Templates for an AIS Solution
 ![ais-templates](docs/images/overview.png)
 
 ## Contributing
-We are open for all contributions, learn more about contributing to this repo in the ["Contributions guide"](docs/CONTRIBUTIONS.md).
+We are open for all contributions, learn more about contributing to this repo in the ["Contributions guide"](docs/CONTRIBUTING.md).
