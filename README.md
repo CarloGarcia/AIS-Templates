@@ -35,7 +35,10 @@ This solution makes use of the following Azure Services:
 This example solution also includes a stub (or mock API) that to represents the backend EPR system to allow quick & easy testing. More off-ramps to backend systems can quickly and easily be added to the solution as required. A simple API with a mock response has been created in API Management for this.
 
 ## Key Features
-This DevOps deployment example demonstrates some key capabilies of ARM templates to automate and streamline deployments and minimise manual steps.
+This DevOps deployment example demonstrates some key capabilities of ARM templates to automate and streamline deployments and minimise manual steps.
+* **KeyVault Integration** - the ability to add and retrieve secrets to and from KeyVault during deployments. For Example service bus connection strings.
+* **Securing Logic Apps** - Deploy logic apps with access control enabled from the start. For example looking up and whitelisting the IP address of APIM during deployment.
+* **Logic App and APIM Integration** - Retrieving the URLs and access key signatures for Logic Apps when deploying API's into APIM.
 
 ### Naming convention:
 This sample makes use of a specific convention for naming resources. All resources which are aware of (or make use of) other shared resources in the same solution expect those resources to named in a specific way. This just makes discovery of the components of the solution much easier and the simplifies and stream lines the parameter files for the various ARM templates.
