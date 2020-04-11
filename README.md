@@ -1,5 +1,5 @@
 # AIS DevOps Example
-This repository contains a simple DevOps example of a skeleton (or bare bones) Azure Integration Services (AIS) based solution with some sample quick start ARM templates and YAML pipelines to help you get the solution up and running in no time.
+This repository contains a simple DevOps deployment example of a skeleton (or bare bones) Azure Integration Services (AIS) based solution with some sample quick start ARM templates and YAML pipelines to help you get the solution up and running in no time.
 
 The deployment is fully automated and all you need to get started is an Azure account, a Azure DevOps Organization/Project and an user account (or service principle) that allows you to deploy to your Azure subscription.
 
@@ -33,6 +33,9 @@ This solution makes use of the following Azure Services:
 ** **PLEASE NOTE:** The logic apps in this solution do **nothing**. They just pass-through any messages that they receive straight through to the backend system (or stub in this case). These logic apps don't do any processing (for validation, enrichment or transformation) of the messages. This example solution is more for demonstrating DevOps using YAML and ARM Templates and less about capabilities of AIS.
 
 This example solution also includes a stub (or mock API) that to represents the backend EPR system to allow quick & easy testing. More off-ramps to backend systems can quickly and easily be added to the solution as required. A simple API with a mock response has been created in API Management for this.
+
+## Key Features
+This DevOps deployment example demonstrates some key capabilies of ARM templates to automate and streamline deployments and minimise manual steps.
 
 ### Naming convention:
 This sample makes use of a specific convention for naming resources. All resources which are aware of (or make use of) other shared resources in the same solution expect those resources to named in a specific way. This just makes discovery of the components of the solution much easier and the simplifies and stream lines the parameter files for the various ARM templates.
