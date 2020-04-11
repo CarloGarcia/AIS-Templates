@@ -1,4 +1,4 @@
-# AIS-Templates
+# AIS DevOps Example
 This repository contains a simple DevOps example of a skeleton (or bare bones) Azure Integration Services (AIS) based solution with some sample quick start ARM templates and YAML pipelines to help you get the solution up and running in no time.
 
 The deployment is fully automated and all you need to get started is an Azure account, a Azure DevOps Organization/Project and an user account (or service principle) that allows you to deploy to your Azure subscription.
