@@ -30,7 +30,7 @@ This solution makes use of the following Azure Services:
 
 > [**Azure Event Grid**](https://docs.microsoft.com/en-us/azure/event-grid/overview) is another key service makes up AIS suite of services but is not used in this quick start example as that would require Service Bus Premium Tier. Event Grid would provide an optimal solution as the "off-ramp" logic app wouldn't be required to poll for new messages and will instead be notified of new messages by Event Grid as they arrive on the Service Bus. _For this quick sample solution the subscribing Logic App will just poll the Service Bus for new messages every minute._
 
-** **PLEASE NOTE:** The logic apps in this solution do **nothing**. They just pass-through any messages that they receive straight through to the backend system (or stub in this case). These logic apps don't do any processing (for validation, enrichment or transformation) of the messages. This example solution is more for demonstrating DevOps using YAML and ARM Templates and less about capabilities of AIS.
+** **PLEASE NOTE:** The logic apps in this solution do **nothing**. They just pass-through any messages that they receive straight through to the backend system (or stub in this case). These logic apps don't do any processing (for example: validation, enrichment or transformation) of the messages. This example solution is more for demonstrating DevOps using YAML and ARM Templates and less about capabilities of AIS.
 
 This example solution also includes a stub (or mock API) that to represents the backend EPR system to allow quick & easy testing. More off-ramps to backend systems can quickly and easily be added to the solution as required. A simple API with a mock response has been created in API Management for this.
 
