@@ -37,7 +37,6 @@ This example solution also includes a stub (or mock API) that to represents the 
 ## Key Features
 This DevOps deployment example demonstrates some key capabilities of ARM templates to automate and streamline deployments and minimise manual steps.
 * **KeyVault Integration** - The ability to add and retrieve secrets to and from KeyVault during deployments. For Example service bus connection strings.
-<script src="https://gist.github.com/CarloGarcia/df09ef5caf26552b342dc26ad49b0de2.js"></script>
 * **Securing Logic Apps** - Deploy logic apps with access control enabled from the start. For example looking up and whitelisting the IP address of APIM during deployment.
 * **Logic App and APIM Integration** - Retrieving the URLs and access key signatures for Logic Apps when deploying API's into APIM.
 
