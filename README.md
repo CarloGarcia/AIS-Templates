@@ -20,13 +20,13 @@ This example solution consists of some infrastructure, an "on-ramp" and an "off-
 ![ais-templates](docs/images/overview.png)
 
 This solution makes use of the following Azure Services:
-* [API Management](https://docs.microsoft.com/en-us/azure/api-management/api-management-key-concepts) - used to expose the customer Web API
-* [Logic Apps](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview) - used for message processing** and publishing and subscribing to messages.
-* [Service Bus](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) - messaging backbone of the solution. This example makes use of service bus topics and subscriptions.
-* [KeyVault](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-overview) - used to securely store secret details (such as credentials and connections strings, etc.) which the solution references.
-* [Azure Monitor](https://docs.microsoft.com/en-us/azure/azure-monitor/overview)
-    * [Log Analytics Workspace](https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/log-query-overview) - used for logging and monitoring of the Logic Apps.
-    * [Application Insights](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) - used for monitoring API Management.
+* [**API Management**](https://docs.microsoft.com/en-us/azure/api-management/api-management-key-concepts) - used to expose the customer Web API
+* [**Logic Apps**](https://docs.microsoft.com/en-us/azure/logic-apps/logic-apps-overview) - used for message processing** and publishing and subscribing to messages.
+* [**Service Bus**](https://docs.microsoft.com/en-us/azure/service-bus-messaging/service-bus-messaging-overview) - messaging backbone of the solution. This example makes use of service bus topics and subscriptions.
+* [**KeyVault**](https://docs.microsoft.com/en-us/azure/key-vault/key-vault-overview) - used to securely store secret details (such as credentials and connections strings, etc.) which the solution references.
+* [**Azure Monitor**](https://docs.microsoft.com/en-us/azure/azure-monitor/overview)
+    * [**Log Analytics Workspace**](https://docs.microsoft.com/en-us/azure/azure-monitor/log-query/log-query-overview) - used for logging and monitoring of the Logic Apps.
+    * [**Application Insights**](https://docs.microsoft.com/en-us/azure/azure-monitor/app/app-insights-overview) - used for monitoring API Management.
 
 > [Azure Event Grid](https://docs.microsoft.com/en-us/azure/event-grid/overview) is another key service makes up AIS suite of services but is not used in this quick start example as that would require Service Bus Premium Tier. Event Grid would provide an optimal solution as the "off-ramp" logic app wouldn't be required to poll for new messages and will instead be notified of new messages by Event Grid as they arrive on the Service Bus. _For this quick sample solution the subscribing Logic App will just poll the Service Bus for new messages every minute._
 
