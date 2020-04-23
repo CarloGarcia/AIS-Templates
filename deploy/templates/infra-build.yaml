@@ -64,23 +64,17 @@ steps:
     csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.parameters.json'
     deploymentMode: Validation
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-service-bus-topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
-#    location: '$(Infra.Location)'
-#   csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic.parameters.json'
-#    deploymentMode: Validation   
+- task: AzureResourceGroupDeployment@2
+  displayName: 'Validate infra-storage-account on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+  inputs:
+    azureSubscription: '$(Azure.ServiceConnectionId)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    location: '$(Infra.Location)'
+    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-storage-account.json'
+    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-storage-account.parameters.json'
+    deploymentMode: Validation    
 
-#- task: AzureResourceGroupDeployment@2
-#  displayName: 'Validate infra-service-bus-topic-subscription on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
-#  inputs:
-#    azureSubscription: '$(Azure.ServiceConnectionId)'
-#    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
-#    location: '$(Infra.Location)'
-#    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.json'
-#    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus-topic-subscription.parameters.json'
-#    deploymentMode: Validation
+- publish: source/infra
+  artifact: infra
+
    
