@@ -1,5 +1,5 @@
 trigger:
-  - feature/cgm/yaml-pipelines #master
+  - master
   
 pool:
   vmImage: 'ubuntu-latest'
@@ -10,14 +10,15 @@ variables:
   
 stages:
 - stage: Build
-  displayName: CI - Validate ARM Templates
+  displayName: Build
   jobs:
   - job: Validate
     displayName: Validate ARM Templates
     steps:
     - template: deploy/templates/infra-build.yaml
+
 - stage: Deploy
-  displayName: Deploy to DEV
+  displayName: Release to DEV
   jobs:
   - job: Deploy
     displayName: Deploy Infra
