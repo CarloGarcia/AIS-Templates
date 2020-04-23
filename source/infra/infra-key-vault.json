@@ -45,7 +45,10 @@
     "serviceBusNameSpace": "[concat(parameters('infra').environment, '-', parameters('infra').project, '-sb-', parameters('infra').region)]",
     "serviceBusSasKeyName": "RootManageSharedAccessKey",
     "authorizationRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusNameSpace'), variables('serviceBusSasKeyName'))]",
-    "serviceBusSecretName": "Service-Bus-Connection-String"
+    "serviceBusSecretName": "Service-Bus-Connection-String",    
+    "storageAccountName": "[concat(replace(parameters('infra').environment, '-', ''), parameters('infra').project, 'storage')]",
+    "storageAccountResourceId": "[resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName'))]",
+    "storageAccountSecretName": "Storage-Account-Key"
   },
   "resources": [
     {
@@ -92,6 +95,16 @@
       "dependsOn": [
         "[resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName'))]"
       ]
+    },
+    {
+      "type": "Microsoft.KeyVault/vaults/secrets",
+      "name": "[concat(variables('keyVaultName'), '/', variables('storageAccountSecretName'))]",
+      "apiVersion": "2018-02-14",
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "contentType": "text/plain",        
+        "value": "[listKeys(variables('storageAccountResourceId'), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+      }
     }
   ],
   "outputs": {}
