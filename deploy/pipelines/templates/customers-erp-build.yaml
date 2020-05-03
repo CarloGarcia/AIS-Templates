@@ -45,7 +45,7 @@ steps:
     deploymentMode: Validation
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/'
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
     SourceFolder: source/customers/ERP
     Contents: '*.json'

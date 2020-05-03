@@ -45,7 +45,7 @@ steps:
     deploymentMode: Validation
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/'
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
     SourceFolder: source/customers/API
     Contents: '*.json'
@@ -53,5 +53,5 @@ steps:
     CleanTargetFolder: true
     OverWrite: true
 
-- publish: source/customers/api
+- publish: source/customers/API
   artifact: API
