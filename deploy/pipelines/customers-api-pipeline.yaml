@@ -40,8 +40,9 @@ variables:
     value: $[counter(format('{0}.{1}', variables['Major'], variables['Minor']), 0)]
 
 resources:
- - pipelines: Infra
-   source: Infra
+  pipelines: 
+  - pipeline: Infra
+    source: Infra
 
 stages:
 - stage: Build
