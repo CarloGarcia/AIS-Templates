@@ -15,9 +15,6 @@ jobs:
         - download: current
           artifact: ERP
 
-        - download: current
-          artifact: Infra          
-
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/ERP/*.json'
           inputs:
