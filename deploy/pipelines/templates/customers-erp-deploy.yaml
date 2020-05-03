@@ -20,7 +20,7 @@ jobs:
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/ERP/*.json'
           inputs:
-            rootDirectory: '$(Pipeline.Workspace)'
+            rootDirectory: '$(Pipeline.Workspace)/ERP/'
             targetFiles: '**/*.json'
 
         - task: AzureResourceGroupDeployment@2
