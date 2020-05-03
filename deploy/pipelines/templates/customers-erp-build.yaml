@@ -2,7 +2,7 @@ steps:
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)/ERP/Validation/'
   inputs:
-    SourceFolder: source/infra
+    SourceFolder: source/customers/ERP
     Contents: '*.json'
     TargetFolder: '$(build.artifactstagingdirectory)/ERP/Validation/'
     CleanTargetFolder: true
