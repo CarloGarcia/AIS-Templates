@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "releaseInfo": {
-      "value": "Release #{Release.ReleaseName}#, triggered by #{Release.Deployment.RequestedFor}#"
+      "value": "Release #{Build.BuildNumber}#, triggered by #{Build.RequestedFor}#"
     },
     "infra": {
       "value": {
