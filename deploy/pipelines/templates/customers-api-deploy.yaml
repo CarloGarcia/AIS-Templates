@@ -6,7 +6,7 @@ parameters:
 jobs:
 - deployment: ${{ parameters.name }}
   pool: ${{ parameters.pool }}
-  displayName: Deploy Infra
+  displayName: Deploy API
   environment: '${{ parameters.env }}'
   strategy:
     runOnce:
@@ -15,7 +15,7 @@ jobs:
         - download: current
           artifact: API
 
-        - download: Infra
+        - download: infra
 
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/API/*.json'
