@@ -44,6 +44,11 @@ steps:
     csmParametersFile: 'source/customers/API/Validation/apim-customers-api.parameters.json'
     deploymentMode: Validation
 
+- task: DeleteFiles@1
+  displayName: 'Delete files from source/customers/API/Validation'
+  inputs:
+    SourceFolder: 'source/customers/API/Validation'
+
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:

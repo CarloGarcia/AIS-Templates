@@ -74,6 +74,11 @@ steps:
     csmParametersFile: 'source/infra/Validation/infra-storage-account.parameters.json'
     deploymentMode: Validation    
 
+- task: DeleteFiles@1
+  displayName: 'Delete files from source/infra/Validation'
+  inputs:
+    SourceFolder: 'source/infra/Validation'
+
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
   inputs:
