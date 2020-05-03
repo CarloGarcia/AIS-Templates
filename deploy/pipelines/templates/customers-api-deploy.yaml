@@ -1,0 +1,52 @@
+parameters:
+  name: ''
+  pool: ''
+  env: ''
+
+jobs:
+- deployment: ${{ parameters.name }}
+  pool: ${{ parameters.pool }}
+  displayName: Deploy Infra
+  environment: '${{ parameters.env }}'
+  strategy:
+    runOnce:
+      deploy:
+        steps:
+        - download: current
+          artifact: API
+
+        - task: qetza.replacetokens.replacetokens-task.replacetokens@3
+          displayName: 'Replace tokens in $(Pipeline.Workspace)/API/*.json'
+          inputs:
+            rootDirectory: '$(Pipeline.Workspace)/API'
+            targetFiles: '**/*.json'    
+
+        - task: AzureResourceGroupDeployment@2
+          displayName: 'Deploy Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+          inputs:
+            azureSubscription: '$(Azure.ServiceConnectionId)'
+            resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+            location: '$(Infra.Location)'
+            csmFile: 'source/infra/infra-service-bus-topic.json'
+            csmParametersFile: '$(Pipeline.Workspace)/API/topic-customers.parameters.json'
+            deploymentMode: Incremental
+
+        - task: AzureResourceGroupDeployment@2
+          displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
+          inputs:
+            azureSubscription: '$(Azure.ServiceConnectionId)'
+            resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+            location: '$(Infra.Location)'
+            csmFile: '$(Pipeline.Workspace)/API/logicapp-customers-api.json'
+            csmParametersFile: '$(Pipeline.Workspace)/API/logicapp-customers-api.parameters.json'
+            deploymentMode: Incremental
+
+        - task: AzureResourceGroupDeployment@2
+          displayName: 'Deploy Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+          inputs:
+            azureSubscription: '$(Azure.ServiceConnectionId)'
+            resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+            location: '$(Infra.Location)'
+            csmFile: '$(Pipeline.Workspace)/API/apim-customers-api.json'
+            csmParametersFile: '$(Pipeline.Workspace)/API/apim-customers-api.parameters.json'
+            deploymentMode: Incremental

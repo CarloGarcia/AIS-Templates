@@ -1,9 +1,18 @@
 steps:
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/API/Validation/'
+  inputs:
+    SourceFolder: source/infra
+    Contents: '*.json'
+    TargetFolder: '$(build.artifactstagingdirectory)/API/Validation/'
+    CleanTargetFolder: true
+    OverWrite: true
+
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
   displayName: 'Replace tokens in source/customers/API/*.json'
   inputs:
-    rootDirectory: 'source/customers/API'
-    targetFiles: '**/*.json'    
+    rootDirectory: 'source/customers/API/Validation/'
+    targetFiles: 'source/customers/API/Validation/*.json'    
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Deploy Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -13,7 +22,7 @@ steps:
     location: '$(Infra.Location)'
     csmFile: 'source/infra/infra-service-bus-topic.json'
     csmParametersFile: 'source/customers/API/topic-customers.parameters.json'
-    deploymentMode: Incremental
+    deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
@@ -21,9 +30,9 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: 'source/customers/API/logicapp-customers-api.json'
-    csmParametersFile: 'source/customers/API/logicapp-customers-api.parameters.json'
-    deploymentMode: Incremental
+    csmFile: 'source/customers/API/Validation/logicapp-customers-api.json'
+    csmParametersFile: 'source/customers/API/Validation/logicapp-customers-api.parameters.json'
+    deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Deploy Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -31,6 +40,9 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: 'source/customers/API/apim-customers-api.json'
-    csmParametersFile: 'source/customers/API/apim-customers-api.parameters.json'
-    deploymentMode: Incremental
+    csmFile: 'source/customers/API/Validation/API/apim-customers-api.json'
+    csmParametersFile: 'source/customers/API/Validation/apim-customers-api.parameters.json'
+    deploymentMode: Validation
+
+- publish: source/customers/api
+  artifact: API
