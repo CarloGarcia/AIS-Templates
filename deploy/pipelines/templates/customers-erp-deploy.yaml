@@ -34,10 +34,10 @@ jobs:
             deploymentMode: Incremental
 
         - task: AzureResourceGroupDeployment@2
-          displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-erp-$(Infra.Region)'
+          displayName: 'Deploy Customer Logic App on $(Infra.Environment)-$(Infra.Project)-customers-erp-$(Infra.Region)'
           inputs:
             azureSubscription: '$(Azure.ServiceConnectionId)'
-            resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-demo-customers-erp-$(Infra.Region)'
+            resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-customers-erp-$(Infra.Region)'
             location: '$(Infra.Location)'
             csmFile: '$(Pipeline.Workspace)/ERP/logicapp-customers-erp.json'
             csmParametersFile: '$(Pipeline.Workspace)/ERP/logicapp-customers-erp.parameters.json'
