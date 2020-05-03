@@ -12,7 +12,7 @@ steps:
   displayName: 'Replace tokens in source/infra/Validation/*.json'
   inputs:
     rootDirectory: 'source/infra/Validation/'
-    targetFiles: 'source/infra/Validation/*.json'
+    targetFiles: '**/*.json'
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Validate infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'

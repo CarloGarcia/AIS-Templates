@@ -12,7 +12,7 @@ steps:
   displayName: 'Replace tokens in source/customers/API/*.json'
   inputs:
     rootDirectory: 'source/customers/API/Validation/'
-    targetFiles: 'source/customers/API/Validation/*.json'    
+    targetFiles: '**/*.json'    
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Validate Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
