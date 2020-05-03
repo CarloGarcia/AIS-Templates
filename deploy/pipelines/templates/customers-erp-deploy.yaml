@@ -15,12 +15,12 @@ jobs:
         - download: current
           artifact: ERP
 
-        - download: infra          
+        - download: Infra          
 
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/ERP/*.json'
           inputs:
-            rootDirectory: '$(Pipeline.Workspace)/ERP/'
+            rootDirectory: '$(Pipeline.Workspace)'
             targetFiles: '**/*.json'
 
         - task: AzureResourceGroupDeployment@2

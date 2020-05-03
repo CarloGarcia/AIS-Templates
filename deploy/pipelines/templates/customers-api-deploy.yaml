@@ -15,12 +15,12 @@ jobs:
         - download: current
           artifact: API
 
-        - download: infra
+        - download: Infra
 
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/API/*.json'
           inputs:
-            rootDirectory: '$(Pipeline.Workspace)/API/'
+            rootDirectory: '$(Pipeline.Workspace)'
             targetFiles: '**/*.json'    
 
         - task: AzureResourceGroupDeployment@2
