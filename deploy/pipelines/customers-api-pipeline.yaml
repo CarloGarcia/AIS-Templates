@@ -1,8 +1,27 @@
 name: $(TeamProject)_$(Build.DefinitionName)_$(SourceBranchName)_$(Major).$(Minor).$(Patch)
 
 trigger:
-  - master
-  
+  batch: true
+  branches:
+    include:
+    - master
+    - feature/*
+    exclude:
+    - feature/experimental/*
+  paths:
+    exclude:
+    - README.md
+
+pr:
+  branches:
+    include:
+    - feature/*
+    exclude:
+    - feature/experimental/*
+  paths:
+    exclude:
+    - README.md    
+
 pool:
   vmImage: 'ubuntu-latest'
   
