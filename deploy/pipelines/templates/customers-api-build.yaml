@@ -28,7 +28,7 @@ steps:
   displayName: 'Validate Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-demo-customers-api-$(Infra.Region)'
     location: '$(Infra.Location)'
     csmFile: 'source/customers/API/Validation/logicapp-customers-api.json'
     csmParametersFile: 'source/customers/API/Validation/logicapp-customers-api.parameters.json'
