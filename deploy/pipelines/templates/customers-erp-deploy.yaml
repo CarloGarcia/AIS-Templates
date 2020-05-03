@@ -29,7 +29,7 @@ jobs:
             azureSubscription: '$(Azure.ServiceConnectionId)'
             resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
             location: '$(Infra.Location)'
-            csmFile: '$(Pipeline.Workspace)/Infra/Infra/infra-service-bus-topic.json'
+            csmFile: '$(Pipeline.Workspace)/Infra/Infra/infra-service-bus-topic-subscription.json'
             csmParametersFile: '$(Pipeline.Workspace)/ERP/topic-subscription-customers.parameters.json'
             deploymentMode: Incremental
 
