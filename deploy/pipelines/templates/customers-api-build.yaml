@@ -48,8 +48,8 @@ steps:
   displayName: 'Delete files from source/customers/API/Validation'
   inputs:
     Contents: 
-    - '**/Validation/*'
-    - '**/Validation*'    
+     '**/Validation/*'
+     '**/Validation*'    
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
