@@ -77,7 +77,9 @@ steps:
 - task: DeleteFiles@1
   displayName: 'Delete files from source/infra/Validation'
   inputs:
-    SourceFolder: 'source/infra/Validation*'
+    Contents: |
+      **/Validation/*
+      **/Validation* 
 
 - task: CopyFiles@2
   displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
