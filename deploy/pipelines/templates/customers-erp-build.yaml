@@ -20,7 +20,7 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: 'source/infra/infra-service-bus-topic.json'
+    csmFile: 'source/infra/infra-service-bus-topic-subscription.json'
     csmParametersFile: 'source/customers/ERP/Validation/topic-subscription-customers.parameters.json'
     deploymentMode: Validation
 
