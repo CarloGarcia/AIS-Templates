@@ -15,8 +15,7 @@ jobs:
         - download: current
           artifact: API
 
-        - download: 
-          artifact: Infra
+        - download: Infra
 
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/API/*.json'
