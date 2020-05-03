@@ -39,6 +39,11 @@ variables:
   - name: Patch
     value: $[counter(format('{0}.{1}', variables['Major'], variables['Minor']), 0)]
 
+resources:
+  pipelines: 
+  - pipeline: Infra
+    source: Infra
+
 stages:
 - stage: Build
   displayName: Build
