@@ -15,10 +15,13 @@ jobs:
         - download: current
           artifact: ERP
 
+        - download: current
+          artifact: Infra          
+
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/ERP/*.json'
           inputs:
-            rootDirectory: '$(Pipeline.Workspace)/ERP'
+            rootDirectory: '$(Pipeline.Workspace)/'
             targetFiles: '**/*.json'    
 
         - task: AzureResourceGroupDeployment@2
@@ -27,7 +30,7 @@ jobs:
             azureSubscription: '$(Azure.ServiceConnectionId)'
             resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
             location: '$(Infra.Location)'
-            csmFile: '$(Pipeline.Workspace)/ERP/infra-service-bus-topic.json'
+            csmFile: '$(Pipeline.Workspace)/Infra/infra-service-bus-topic.json'
             csmParametersFile: '$(Pipeline.Workspace)/ERP/topic-subscription-customers.parameters.json'
             deploymentMode: Incremental
 

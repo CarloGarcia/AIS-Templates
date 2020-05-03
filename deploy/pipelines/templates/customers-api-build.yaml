@@ -40,12 +40,12 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: 'source/customers/API/Validation/API/apim-customers-api.json'
+    csmFile: 'source/customers/API/Validation/apim-customers-api.json'
     csmParametersFile: 'source/customers/API/Validation/apim-customers-api.parameters.json'
     deploymentMode: Validation
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/API/'
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/'
   inputs:
     SourceFolder: source/customers/API
     Contents: '*.json'

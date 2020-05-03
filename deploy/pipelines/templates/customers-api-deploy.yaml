@@ -15,10 +15,13 @@ jobs:
         - download: current
           artifact: API
 
+        - download: current
+          artifact: Infra          
+
         - task: qetza.replacetokens.replacetokens-task.replacetokens@3
           displayName: 'Replace tokens in $(Pipeline.Workspace)/API/*.json'
           inputs:
-            rootDirectory: '$(Pipeline.Workspace)/API'
+            rootDirectory: '$(Pipeline.Workspace)'
             targetFiles: '**/*.json'    
 
         - task: AzureResourceGroupDeployment@2
@@ -27,7 +30,7 @@ jobs:
             azureSubscription: '$(Azure.ServiceConnectionId)'
             resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
             location: '$(Infra.Location)'
-            csmFile: '$(Pipeline.Workspace)/API/infra-service-bus-topic.json'
+            csmFile: '$(Pipeline.Workspace)/Infra/infra-service-bus-topic.json'
             csmParametersFile: '$(Pipeline.Workspace)/API/topic-customers.parameters.json'
             deploymentMode: Incremental
 
