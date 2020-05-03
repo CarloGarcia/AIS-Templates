@@ -23,26 +23,26 @@ stages:
   - job: Validate
     displayName: Validate ARM Templates
     steps:
-    - template: templates/infra-build.yaml
-    - template: templates/customers-api-build.yaml
-    - template: templates/customers-erp-build.yaml        
+    - template: deploy/templates/infra-build.yaml
+    - template: deploy/templates/customers-api-build.yaml
+    - template: deploy/templates/customers-erp-build.yaml        
 
 - stage: Deploy
   displayName: Release to DEV
   jobs:
-  - template: templates/infra-deploy.yaml
+  - template: deploy/templates/infra-deploy.yaml
     parameters:
       env: DEV
       name: Deploy_Infra
       pool:
         vmImage: 'ubuntu-latest'
-  - template: templates/customers-api-deploy.yaml
+  - template: deploy/templates/customers-api-deploy.yaml
     parameters:
       env: DEV
       name: Deploy_API
       pool:
         vmImage: 'ubuntu-latest'    
-  - template: templates/customers-erp-deploy.yaml
+  - template: deploy/templates/customers-erp-deploy.yaml
     parameters:
       env: DEV
       name: Deploy_ERP
