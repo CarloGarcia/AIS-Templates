@@ -1,10 +1,10 @@
 steps:
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/API/Validation/'
+  displayName: 'Copy Files to: source/customers/API/Validation/'
   inputs:
-    SourceFolder: source/infra
+    SourceFolder: source/customers/API
     Contents: '*.json'
-    TargetFolder: '$(build.artifactstagingdirectory)/API/Validation/'
+    TargetFolder: 'source/customers/API/Validation/'
     CleanTargetFolder: true
     OverWrite: true
 
@@ -12,10 +12,10 @@ steps:
   displayName: 'Replace tokens in source/customers/API/*.json'
   inputs:
     rootDirectory: 'source/customers/API/Validation/'
-    targetFiles: 'source/customers/API/Validation/*.json'    
+    targetFiles: '**/*.json'    
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+  displayName: 'Validate Customer Topic on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -25,21 +25,40 @@ steps:
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
+  displayName: 'Validate Customer Logic App on $(Infra.Environment)-demo-customers-api-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
-    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+    resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-demo-customers-api-$(Infra.Region)'
     location: '$(Infra.Location)'
     csmFile: 'source/customers/API/Validation/logicapp-customers-api.json'
     csmParametersFile: 'source/customers/API/Validation/logicapp-customers-api.parameters.json'
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+  displayName: 'Validate Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: 'source/customers/API/Validation/API/apim-customers-api.json'
+    csmFile: 'source/customers/API/Validation/apim-customers-api.json'
     csmParametersFile: 'source/customers/API/Validation/apim-customers-api.parameters.json'
     deploymentMode: Validation
+
+- task: DeleteFiles@1
+  displayName: 'Delete files from source/customers/API/Validation'
+  inputs:
+    Contents: |
+      **/Validation/*
+      **/Validation*    
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: source/customers/API
+    Contents: '*.json'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
+
+- publish: source/customers/API
+  artifact: API

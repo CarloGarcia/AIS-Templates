@@ -9,6 +9,8 @@ trigger:
     exclude:
     - feature/experimental/*
   paths:
+    include:
+    - source/customers/erp  
     exclude:
     - README.md
 
@@ -19,6 +21,8 @@ pr:
     exclude:
     - feature/experimental/*
   paths:
+    include:
+    - source/customers/erp  
     exclude:
     - README.md    
 
@@ -35,6 +39,11 @@ variables:
   - name: Patch
     value: $[counter(format('{0}.{1}', variables['Major'], variables['Minor']), 0)]
 
+resources:
+  pipelines: 
+  - pipeline: Infra
+    source: Infra
+
 stages:
 - stage: Build
   displayName: Build
@@ -42,28 +51,14 @@ stages:
   - job: Validate
     displayName: Validate ARM Templates
     steps:
-    - template: deploy/pipelines/templates/infra-build.yaml
-    - template: deploy/pipelines/templates/customers-api-build.yaml
-    - template: deploy/pipelines/templates/customers-erp-build.yaml        
+    - template: templates/customers-api-build.yaml
 
 - stage: Deploy
   displayName: Release to DEV
   jobs:
-  - template: deploy/pipelines/templates/infra-deploy.yaml
-    parameters:
-      env: DEV
-      name: Deploy_Infra
-      pool:
-        vmImage: 'ubuntu-latest'
-  - template: deploy/pipelines/templates/customers-api-deploy.yaml
+  - template: templates/customers-api-deploy.yaml
     parameters:
       env: DEV
       name: Deploy_API
-      pool:
-        vmImage: 'ubuntu-latest'    
-  - template: deploy/pipelines/templates/customers-erp-deploy.yaml
-    parameters:
-      env: DEV
-      name: Deploy_ERP
       pool:
         vmImage: 'ubuntu-latest'    
