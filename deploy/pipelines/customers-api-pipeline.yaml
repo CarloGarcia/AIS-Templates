@@ -9,6 +9,8 @@ trigger:
     exclude:
     - feature/experimental/*
   paths:
+    include:
+    - source/customers/erp  
     exclude:
     - README.md
 
@@ -19,6 +21,8 @@ pr:
     exclude:
     - feature/experimental/*
   paths:
+    include:
+    - source/customers/erp  
     exclude:
     - README.md    
 
