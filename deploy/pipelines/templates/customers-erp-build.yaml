@@ -1,10 +1,10 @@
 steps:
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/ERP/Validation/'
+  displayName: 'Copy Files to: source/customers/ERP/Validation/'
   inputs:
     SourceFolder: source/customers/ERP
     Contents: '*.json'
-    TargetFolder: '$(build.artifactstagingdirectory)/ERP/Validation/'
+    TargetFolder: 'source/customers/ERP/Validation/'
     CleanTargetFolder: true
     OverWrite: true
 
@@ -15,7 +15,7 @@ steps:
     targetFiles: 'source/customers/ERP/Validation/*.json'    
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer Topic Subscription on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+  displayName: 'Validate Customer Topic Subscription on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -25,7 +25,7 @@ steps:
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer Logic App on $(Infra.Environment)-demo-customers-erp-$(Infra.Region)'
+  displayName: 'Validate Customer Logic App on $(Infra.Environment)-demo-customers-erp-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -35,7 +35,7 @@ steps:
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
-  displayName: 'Deploy Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
+  displayName: 'Validate Customer API on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
   inputs:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -43,6 +43,15 @@ steps:
     csmFile: 'source/customers/ERP/Validation/apim-customers-erp-stub.json'
     csmParametersFile: 'source/customers/ERP/Validation/apim-customers-erp-stub.parameters.json'
     deploymentMode: Validation
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/'
+  inputs:
+    SourceFolder: source/customers/ERP
+    Contents: '*.json'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
 
 - publish: source/customers/ERP
   artifact: ERP

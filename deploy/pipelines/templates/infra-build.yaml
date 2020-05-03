@@ -1,18 +1,18 @@
 steps:
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)/Infra/Validation/'
+  displayName: 'Copy Files to: source/infra/Validation/'
   inputs:
     SourceFolder: source/infra
     Contents: '*.json'
-    TargetFolder: '$(build.artifactstagingdirectory)/Infra/Validation/'
+    TargetFolder: 'source/infra/Validation/'
     CleanTargetFolder: true
     OverWrite: true
 
 - task: qetza.replacetokens.replacetokens-task.replacetokens@3
-  displayName: 'Replace tokens in $(build.artifactstagingdirectory)/Infra/Validation/*.json'
+  displayName: 'Replace tokens in source/infra/Validation/*.json'
   inputs:
-    rootDirectory: '$(build.artifactstagingdirectory)/Infra/Validation/'
-    targetFiles: '$(build.artifactstagingdirectory)/Infra/Validation/*.json'
+    rootDirectory: 'source/infra/Validation/'
+    targetFiles: 'source/infra/Validation/*.json'
 
 - task: AzureResourceGroupDeployment@2
   displayName: 'Validate infra-apim on $(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
@@ -20,8 +20,8 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-apim.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-apim.parameters.json'
+    csmFile: 'source/infra/Validation/infra-apim.json'
+    csmParametersFile: 'source/infra/Validation/infra-apim.parameters.json'
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
@@ -30,8 +30,8 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-app-insights.parameters.json'
+    csmFile: 'source/infra/Validation/infra-app-insights.json'
+    csmParametersFile: 'source/infra/Validation/infra-app-insights.parameters.json'
     deploymentMode: Validation    
 
 - task: AzureResourceGroupDeployment@2
@@ -40,8 +40,8 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-key-vault.parameters.json'
+    csmFile: 'source/infra/Validation/infra-key-vault.json'
+    csmParametersFile: 'source/infra/Validation/infra-key-vault.parameters.json'
     deploymentMode: Validation   
  
 - task: AzureResourceGroupDeployment@2
@@ -50,8 +50,8 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-log-analytics.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-log-analytics.parameters.json'
+    csmFile: 'source/infra/Validation/infra-log-analytics.json'
+    csmParametersFile: 'source/infra/Validation/infra-log-analytics.parameters.json'
     deploymentMode: Validation   
 
 - task: AzureResourceGroupDeployment@2
@@ -60,8 +60,8 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-service-bus.parameters.json'
+    csmFile: 'source/infra/Validation/infra-service-bus.json'
+    csmParametersFile: 'source/infra/Validation/infra-service-bus.parameters.json'
     deploymentMode: Validation
 
 - task: AzureResourceGroupDeployment@2
@@ -70,11 +70,18 @@ steps:
     azureSubscription: '$(Azure.ServiceConnectionId)'
     resourceGroupName: '$(Infra.Environment)-$(Infra.Project)-infra-$(Infra.Region)'
     location: '$(Infra.Location)'
-    csmFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-storage-account.json'
-    csmParametersFile: '$(build.artifactstagingdirectory)/Infra/Validation/infra-storage-account.parameters.json'
+    csmFile: 'source/infra/Validation/infra-storage-account.json'
+    csmParametersFile: 'source/infra/Validation/infra-storage-account.parameters.json'
     deploymentMode: Validation    
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: source/infra
+    Contents: '*.json'
+    TargetFolder: '$(build.artifactstagingdirectory)'
+    CleanTargetFolder: true
+    OverWrite: true
 
 - publish: source/infra
   artifact: infra
-
-   
